@@ -2,7 +2,7 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: allow-knative-to-sonataflow-and-workflows
+  name: {{ .Release.Name }}-allow-knative-to-sonataflow-and-workflows
   # Sonataflow and Workflows are using the RHDH target namespace.
   namespace: {{ .Release.Namespace | quote }}
 spec:
@@ -22,7 +22,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: allow-external-communication
+  name: {{ .Release.Name }}-allow-external-communication
   namespace: {{ .Release.Namespace | quote }}
 spec:
   podSelector: {}
@@ -36,7 +36,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: allow-intra-network
+  name: {{ .Release.Name }}-allow-intra-network
   namespace: {{ .Release.Namespace | quote }}
 spec:
   # Apply this policy to all pods in the namespace
@@ -57,7 +57,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: allow-monitoring-to-sonataflow-and-workflows
+  name: {{ .Release.Name }}-allow-monitoring-to-sonataflow-and-workflows
   namespace: {{ .Release.Namespace | quote }}
 spec:
   # Apply this policy to all pods in the namespace

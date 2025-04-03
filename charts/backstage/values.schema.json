@@ -95,7 +95,7 @@
             "additionalProperties": false,
             "properties": {
                 "enabled": {
-                    "default": true,
+                    "default": false,
                     "title": "enabled flag",
                     "type": "boolean"
                 },
@@ -255,7 +255,7 @@
                     "additionalProperties": false,
                     "properties": {
                         "enabled": {
-                            "default": true,
+                            "default": false,
                             "title": "enabled flag",
                             "type": "boolean"
                         }
@@ -267,7 +267,7 @@
                     "additionalProperties": false,
                     "properties": {
                         "enabled": {
-                            "default": true,
+                            "default": false,
                             "title": "enabled flag",
                             "type": "boolean"
                         }
@@ -1160,24 +1160,6 @@
                                     "baseUrl": "https://{{- include \"janus-idp.hostname\" . }}",
                                     "cors": {
                                         "origin": "https://{{- include \"janus-idp.hostname\" . }}"
-                                    },
-                                    "csp": {
-                                        "connect-src": [
-                                            "'self'",
-                                            "http:",
-                                            "https:",
-                                            "data:"
-                                        ],
-                                        "script-src": [
-                                            "'self'",
-                                            "'unsafe-inline'",
-                                            "'unsafe-eval'"
-                                        ],
-                                        "script-src-elem": [
-                                            "'self'",
-                                            "'unsafe-inline'",
-                                            "'unsafe-eval'"
-                                        ]
                                     },
                                     "database": {
                                         "connection": {

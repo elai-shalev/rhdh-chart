@@ -204,7 +204,7 @@
                 "enabled": {
                     "title": "enabled flag",
                     "type": "boolean",
-                    "default": true
+                    "default": false
                 },
                 "rhdhPlugins": {
                     "title": "rhdhPlugins configuration",

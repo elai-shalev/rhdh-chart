@@ -56,10 +56,6 @@ upstream:
         baseUrl: 'https://{{- include "janus-idp.hostname" . }}'
         cors:
           origin: 'https://{{- include "janus-idp.hostname" . }}'
-        csp:
-          script-src: ["'self'", "'unsafe-inline'", "'unsafe-eval'"]
-          script-src-elem: ["'self'", "'unsafe-inline'", "'unsafe-eval'"]
-          connect-src: ["'self'", 'http:', 'https:', 'data:']
         database:
           connection:
             password: ${POSTGRESQL_ADMIN_PASSWORD}
@@ -344,15 +340,15 @@ test:
     tag: latest
 
 orchestrator:
-  enabled: true
+  enabled: false
   rhdhPlugins: # RHDH plugins required for the Orchestrator
     npmRegistry: "" # NPM registry is defined already in the container, but sometimes the registry need to be modified to use different versions of the plugin, for example: staging(https://npm.stage.registry.redhat.com) or development repositories
 
   serverlessLogicOperator:
-    enabled: true # whether the operator resources are deployed
+    enabled: false # whether the operator resources are deployed
   
   serverlessOperator:
-    enabled: true # whether the operator resources are deployed
+    enabled: false # whether the operator resources are deployed
   
   postgres:
     serviceName: "sonataflow-psql-postgresql" # The name of the Postgres DB service to be used by platform services. Cannot be empty.
