@@ -38,8 +38,8 @@ jobs:
                   chartName = potentialChart;
                   versionLevel = args[1] || "patch";
                 } else {
-                  chartName = "backstage";
-                  versionLevel = args[0] || "patch";
+                  core.setFailed(`Error: Invalid chart name: ${potentialChart}. Valid charts: ${supportedCharts.join(", ")}`);
+                  return;
                 }
               } else {
                 chartName = "backstage";
