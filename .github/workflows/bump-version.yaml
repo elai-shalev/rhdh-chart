@@ -33,25 +33,28 @@ jobs:
             if (commentBody.startsWith(commandPrefix)) {
               commandName = "bump";
               const args = commentBody.slice(commandPrefix.length).trim().split(" "); 
-              
+
               if (args.length >= 1 && supportedCharts.includes(args[0])) {
                 chartName = args[0];
                 versionLevel = args[1] || "patch";
                 if (!validVersions.includes(versionLevel)) {
                   core.setFailed(`Error: Invalid version: ${versionLevel}. Valid versions: ${validVersions.join(", ")}.`);
                   return;
-                  }
-                } else if (args.length === 1 && validVersions.includes(args[0])) {
-                  chartName = "backstage"; // Default chart if only version level is provided
-                  versionLevel = args[0];
-                 } else if (args.length === 0) {
-                   chartName = "backstage";
-                   versionLevel = "patch"; // Default to patch if no arguments are provided                  
-                 } else {
-                  core.setFailed(`Error: Invalid chart name: ${args[0]. Valid charts: ${supportedCharts.join(", ")}.`);
-                  return; 
-                 }
+                }
+              } else if (args.length === 1 && validVersions.includes(args[0])) {
+                chartName = "backstage"; // Default chart if only version level is provided
+                versionLevel = args[0];
+              } else if (args.length === 0) {
+                chartName = "backstage";
+                versionLevel = "patch"; // Default to patch if no arguments are provided                  
+              } else if (args.length >= 1 && !supportedCharts.includes(args[0])) {
+                core.setFailed(`Error: Invalid chart name: ${args[0]}. Valid charts: ${supportedCharts.join(", ")}.`);
+                return; 
+              } else {
+                core.setFailed(`Error: Invalid arguments. Usage: /bump [chart] [${validVersions.join("|")}]`);
+                return;
               }
+            }
 
             core.setOutput("command-name", commandName);
             core.setOutput("chart-name", chartName);
