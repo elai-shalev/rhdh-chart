@@ -1,8 +1,23 @@
 name: Bump
 
 on:
+  # Trigger for production use  
   issue_comment:
     types: [created]
+
+  # Trigger for testing purposes
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'Pull Request Number to test against'
+        required: true
+      chart_name:
+        description: 'Chart Name to bump'
+        required: true
+      bump_level:
+        description: 'Bump Level (major, minor, patch)'
+        required: true
+        default: 'patch'
 
 jobs:
   chart-version:
@@ -15,47 +30,47 @@ jobs:
       issues: write
 
     steps:
-      - name: Check for command
-        id: command
-        continue-on-error: true
-        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
-        with:
-          script: |
-            const commentBody = context.payload.comment.body;
-            const commandPrefix = "/bump ";
-            let commandName = "";
-            let chartName = "";
-            let bumpLevel = "";
+      # - name: Check for command
+        # id: command
+      #   continue-on-error: true
+      #   uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+      #   with:
+      #     script: |
+      #       const commentBody = context.payload.comment.body;
+      #       const commandPrefix = "/bump ";
+      #       let commandName = "";
+      #       let chartName = "";
+      #       let bumpLevel = "";
 
-            if (commentBody.startsWith(commandPrefix)) {
-              commandName = "bump";
-              const args = commentBody.slice(commandPrefix.length).trim().split(" ");
+      #       if (commentBody.startsWith(commandPrefix)) {
+      #         commandName = "bump";
+      #         const args = commentBody.slice(commandPrefix.length).trim().split(" ");
               
-              if (args.length > 0 && args[0]) {
-                chartName = args[0];
-                bumpLevel = args[1] || "patch"; 
+      #         if (args.length > 0 && args[0]) {
+      #           chartName = args[0];
+      #           bumpLevel = args[1] || "patch"; 
 
-                console.log(`Chart Name: ${chartName}, Bump Level: ${bumpLevel}`);
-                console.log(`Args array: ${JSON.stringify(args)}`);
+      #           console.log(`Chart Name: ${chartName}, Bump Level: ${bumpLevel}`);
+      #           console.log(`Args array: ${JSON.stringify(args)}`);
 
-                core.setOutput("chart-name", chartName);
-                core.setOutput("bump-level", bumpLevel);
-                core.setOutput("command-name", commandName);
+      #           core.setOutput("chart-name", chartName);
+      #           core.setOutput("bump-level", bumpLevel);
+      #           core.setOutput("command-name", commandName);
 
-              } else {
-                commandName = "";
-                core.warning("No chart name provided. Format: /bump <chart-name> [level]");
-                }
-            }
+      #         } else {
+      #           commandName = "";
+      #           core.warning("No chart name provided. Format: /bump <chart-name> [level]");
+      #           }
+      #       }
 
-      - name: Add eyes reaction
-        if: steps.command.outputs.command-name == 'bump'
-        uses: peter-evans/create-or-update-comment@71345be0265236311c031f5c7866368bd1eff043 # v4.0.0
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          repository: ${{ github.repository }}
-          comment-id: ${{ github.event.comment.id }}
-          reactions: eyes
+      # - name: Add eyes reaction
+      #   if: steps.command.outputs.command-name == 'bump'
+      #   uses: peter-evans/create-or-update-comment@71345be0265236311c031f5c7866368bd1eff043 # v4.0.0
+      #   with:
+      #     token: ${{ secrets.GITHUB_TOKEN }}
+      #     repository: ${{ github.repository }}
+      #     comment-id: ${{ github.event.comment.id }}
+      #     reactions: eyes
 
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         if: steps.command.outputs.command-name == 'bump'
@@ -85,9 +100,16 @@ jobs:
         with:
           token: ${{ steps.generate_token.outputs.token }}
 
+          # Modifying for testing
+      # - name: Checkout Pull Request
+      #   if: steps.command.outputs.command-name == 'bump'
+      #   run: gh pr checkout ${{ github.event.issue.number }}
+      #   env:
+      #     GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
+
       - name: Checkout Pull Request
         if: steps.command.outputs.command-name == 'bump'
-        run: gh pr checkout ${{ github.event.issue.number }}
+        run: gh pr checkout ${{ github.event.inputs.pr_number }}
         env:
           GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
 
@@ -103,7 +125,10 @@ jobs:
         id: semver
         with:
           current_version: ${{ steps.get_version.outputs.result }}
-          level: ${{ steps.command.outputs.bump-level }}
+          level: ${{ github.event.inputs.bump_level }}
+          # modified for testing
+          # current_version: ${{ steps.get_version.outputs.result }}
+          # level: ${{ steps.command.outputs.bump-level }}
 
       - name: Bump the version
         if: steps.command.outputs.command-name == 'bump'
@@ -124,7 +149,7 @@ jobs:
         if: steps.command.outputs.command-name == 'bump'
         uses: stefanzweifel/git-auto-commit-action@778341af668090896ca464160c2def5d1d1a3eb0 # v6
         with:
-          commit_message: Bump ${{ steps.command.outputs.chart-name }} version to ${{ steps.semver.outputs.new_version }}
+          commit_message: Bump ${{ github.event.inputs.chart_name }} version to ${{ steps.semver.outputs.new_version }}
           commit_options: "-s"
           commit_user_name: RHDH Bot
           commit_user_email: 146280956+rhdh-bot@users.noreply.github.com

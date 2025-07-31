@@ -1,0 +1,12 @@
+{
+  "comment": {
+    "body": "/bump my-chart minor",
+    "id": 12345
+  },
+  "issue": {
+    "number": 42
+  },
+  "repository": {
+    "full_name": "your-username/your-repo"
+  }
+}
