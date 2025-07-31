@@ -34,6 +34,11 @@ jobs:
               if (args.length > 0 && args[0]) {
                 chartName = args[0];
                 bumpLevel = args[1] || "patch"; 
+
+                core.setOutput("chart-name", chartName);
+                core.setOutput("bump-level", bumpLevel);
+                core.setOutput("command-name", commandName);
+                
               } else {
                 commandName = "";
                 core.warning("No chart name provided. Format: /bump <chart-name> [level]");
