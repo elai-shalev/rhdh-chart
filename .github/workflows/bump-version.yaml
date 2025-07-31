@@ -25,40 +25,20 @@ jobs:
             const commandPrefix = "/bump ";
             let commandName = "";
             let chartName = "";
-            let versionLevel = "";
-
-            const supportedCharts = ["backstage", "orchestrator-infra", "orchestrator-software-templates-infra"];
-            const validVersions = ["major", "premajor", "minor", "preminor", "patch", "prepatch", "prerelease"];
+            let bumpLevel = "";
 
             if (commentBody.startsWith(commandPrefix)) {
               commandName = "bump";
-              const args = commentBody.slice(commandPrefix.length).trim().split(" "); 
-
-              if (args.length >= 1 && supportedCharts.includes(args[0])) {
+              const args = commentBody.slice(commandPrefix.length).trim().split(" ");
+              
+              if (args.length > 0 && args[0]) {
                 chartName = args[0];
-                versionLevel = args[1] || "patch";
-                if (!validVersions.includes(versionLevel)) {
-                  core.setFailed(`Error: Invalid version: ${versionLevel}. Valid versions: ${validVersions.join(", ")}.`);
-                  return;
-                }
-              } else if (args.length === 1 && validVersions.includes(args[0])) {
-                chartName = "backstage"; // Default chart if only version level is provided
-                versionLevel = args[0];
-              } else if (args.length === 0) {
-                chartName = "backstage";
-                versionLevel = "patch"; // Default to patch if no arguments are provided                  
-              } else if (args.length >= 1 && !supportedCharts.includes(args[0])) {
-                core.setFailed(`Error: Invalid chart name: ${args[0]}. Valid charts: ${supportedCharts.join(", ")}.`);
-                return; 
+                bumpLevel = args[1] || "patch"; 
               } else {
-                core.setFailed(`Error: Invalid arguments. Usage: /bump [chart] [${validVersions.join("|")}]`);
-                return;
-              }
+                commandName = "";
+                core.warning("No chart name provided. Format: /bump <chart-name> [level]");
+                }
             }
-
-            core.setOutput("command-name", commandName);
-            core.setOutput("chart-name", chartName);
-            core.setOutput("version-level", versionLevel);
 
       - name: Add eyes reaction
         if: steps.command.outputs.command-name == 'bump'
@@ -115,7 +95,7 @@ jobs:
         id: semver
         with:
           current_version: ${{ steps.get_version.outputs.result }}
-          level: ${{ steps.command.outputs.version-level }}
+          level: ${{ steps.command.outputs.bump-level }}
 
       - name: Bump the version
         if: steps.command.outputs.command-name == 'bump'
