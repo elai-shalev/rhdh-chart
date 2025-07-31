@@ -1,23 +1,8 @@
 name: Bump
 
 on:
-  # Trigger for production use  
   issue_comment:
     types: [created]
-
-  # Trigger for testing purposes
-  workflow_dispatch:
-    inputs:
-      pr_number:
-        description: 'Pull Request Number to test against'
-        required: true
-      chart_name:
-        description: 'Chart Name to bump'
-        required: true
-      bump_level:
-        description: 'Bump Level (major, minor, patch)'
-        required: true
-        default: 'patch'
 
 jobs:
   chart-version:
