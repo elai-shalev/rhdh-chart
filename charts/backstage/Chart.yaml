@@ -47,4 +47,9 @@ sources: []
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
 # Note that when this chart is published to https://github.com/openshift-helm-charts/charts
 # it will follow the RHDH versioning 1.y.z
+<<<<<<< HEAD
 version: 4.5.2
+=======
+# making change for testing purposes
+version: 4.4.0
+>>>>>>> efc7ec0 (Testing workflow using charts)
