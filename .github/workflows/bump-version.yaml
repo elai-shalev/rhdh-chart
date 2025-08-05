@@ -38,9 +38,10 @@ jobs:
                 console.log(`Chart Name: ${chartName}, Bump Level: ${bumpLevel}`);
                 console.log(`Args array: ${JSON.stringify(args)}`);
 
-                core.setOutput("chart-name", chartName);
-                core.setOutput("bump-level", bumpLevel);
-                core.setOutput("command-name", commandName);
+                const fs = require('fs');
+                fs.appendFileSync(process.env.GITHUB_OUTPUT, `chart-name=${chartName}\n`);
+                fs.appendFileSync(process.env.GITHUB_OUTPUT, `bump-level=${bumpLevel}\n`);
+                fs.appendFileSync(process.env.GITHUB_OUTPUT, `command-name=${commandName}\n`);
 
               } else {
                 commandName = "";
