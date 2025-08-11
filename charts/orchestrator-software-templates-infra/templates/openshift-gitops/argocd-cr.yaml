@@ -1,4 +1,3 @@
-{{- if and .Values.openshiftGitops.namespaces (.Capabilities.APIVersions.Has "argoproj.io/v1beta1/ArgoCD") }}
 {{- range $ns := .Values.openshiftGitops.namespaces }}
 ---
 apiVersion: argoproj.io/v1beta1
@@ -13,5 +12,4 @@ spec:
   {{- if $.Values.openshiftGitops.argocd_cr }}
   {{- $.Values.openshiftGitops.argocd_cr | toYaml | trim | nindent 2 }}
   {{- end }}
-{{- end }}
 {{- end }}

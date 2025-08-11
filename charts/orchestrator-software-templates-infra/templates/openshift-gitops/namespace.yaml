@@ -1,6 +1,6 @@
 {{- if .Values.openshiftGitops.namespaces }}
 {{- range $index, $ns := .Values.openshiftGitops.namespaces }}
-{{- if ne $index 0 }}
+{{- if ne $ns "openshift-gitops" }}
 ---
 apiVersion: v1
 kind: Namespace
