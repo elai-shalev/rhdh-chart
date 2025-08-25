@@ -78,20 +78,20 @@ Next Steps:
    RHDH_ROUTE="https://$(oc get route -n {{ .Values.orchestratorTemplates.rhdhChartNamespace }} -o jsonpath='{.items[0].spec.host}')"
    
    # Copy template and replace placeholders
-   cp orchestrator-templates-values.yaml.template my-orchestrator-values.yaml
-   sed -i "s|{{RHDH_BASE_URL}}|$RHDH_ROUTE|g" my-orchestrator-values.yaml
+   cp orchestrator-templates-values.yaml.template orchestrator-templates-values.yaml
+   sed -i "s|{RHDH_BASE_URL}|$RHDH_ROUTE|g" orchestrator-templates-values.yaml
 
 2. Backup current values and upgrade backstage chart:
    
    # Backup current configuration
-   helm get values {{ .Values.orchestratorTemplates.rhdhChartReleaseName }} \
+   helm show values charts/backstage \
      -n {{ .Values.orchestratorTemplates.rhdhChartNamespace }} > current-backstage-values.yaml
    
    # Upgrade with both value files
-   helm upgrade {{ .Values.orchestratorTemplates.rhdhChartReleaseName }} redhat-developer/backstage \
+   helm upgrade {{ .Values.orchestratorTemplates.rhdhChartReleaseName }} charts/backstage \
      -n {{ .Values.orchestratorTemplates.rhdhChartNamespace }} \
      -f current-backstage-values.yaml \
-     -f my-orchestrator-values.yaml
+     -f orchestrator-templates-values.yaml
 
 3. Verify the deployment:
    
@@ -103,10 +103,6 @@ Next Steps:
 
 4. Access your RHDH instance and check the 'Create' section for new software templates.
 
-{{- if not $secret }}
-5. Create the required secret (if missing):
-   ./hack/orchestrator-templates-setup.sh
-{{- end }}
 
 ====================================================================
 Troubleshooting:
@@ -116,7 +112,7 @@ If upgrade fails, rollback:
   helm rollback {{ .Values.orchestratorTemplates.rhdhChartReleaseName }} -n {{ .Values.orchestratorTemplates.rhdhChartNamespace }}
 
 If placeholders remain in values file:
-  grep "{{.*}}" my-orchestrator-values.yaml
+  grep "{.*}" my-orchestrator-values.yaml
 
 If software templates not visible:
   kubectl logs -n {{ .Values.orchestratorTemplates.rhdhChartNamespace }} -l app.kubernetes.io/name=backstage
