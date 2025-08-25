@@ -9,9 +9,6 @@ tekton:
 argocd:
   enabled: true
   argocdNamespace: orchestrator-gitops # References the ArgoCD instance created by infra chart
-  argocdUrl: ARGOCD_URL # https://argocd-server-orchestrator-gitops.apps.your-cluster.com
-  argocdUsername: ARGOCD_USERNAME
-  argocdPassword: ARGOCD_PASSWORD
 
 rhdhConfig:
   secretRef:

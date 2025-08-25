@@ -32,19 +32,9 @@ Before installing this chart, ensure you have installed the following:
 1. Backstage chart: responsible for **Red Hat Developer Hub** and Orchestrator. It should be deployed and configured with Orchestrator enabled. 
 2. Orchestrator-software-templates-infra chart: responsible for deploying **OpenShift Pipelines** (Tekton) operator and **OpenShift GitOps** (ArgoCD) operator. It should be deployed in the same namespace as the backstage chart.
 3. Running the setup script: responsible for creating the required secret for the software templates chart.
-4. Optional: To make full use of ArgoCD and Tekton, you must following the instruction to configure the docker secret and ssh credentials, here: https://github.com/rhdhorchestrator/orchestrator-helm-operator/blob/main/docs/gitops/README.md.
+4. Optional: To make full use of ArgoCD and Tekton, you must following the instruction to configure the docker secret and ssh credentials, here: https://github.com/rhdhorchestrator/orchestrator-go-operator/blob/main/docs/gitops/README.md.
+5. Label the RHDH namespace with `oc label ns rhdh rhdh.redhat.com/argocd-namespace=true` to enable the configuration sync.
 
-## TL;DR
-
-```console
-helm repo add redhat-developer https://redhat-developer.github.io/rhdh-chart
-
-helm install my-orchestrator-templates redhat-developer/orchestrator-software-templates
-```
-
-> **Tip**: List all releases using `helm list`
-
-## Configuration
 
 The chart requires a secret named `orchestrator-auth-secret` in the RHDH namespace containing the following keys:
 
@@ -60,15 +50,13 @@ The chart requires a secret named `orchestrator-auth-secret` in the RHDH namespa
 - `ARGOCD_USERNAME`: ArgoCD username (optional)
 - `ARGOCD_PASSWORD`: ArgoCD password (optional)
 
-### Creating the Required Secret
+Acquire the following ArgoCD:
 
-You can use the provided setup script to create the secret:
+ARGOCD_URL: https://argocd-server.<apps.example.com>
+ARGOCD_USERNAME: admin
+ARGOCD_PASSWORD: `oc get secret -n openshift-gitops openshift-gitops-cluster -o jsonpath='{.data.admin\.password}' | base64 -d`
 
-```bash
-./hack/orchestrator-templates-setup.sh
-```
-
-Or create it manually:
+The secret can be created by the setup script or manually
 
 ```bash
 oc create secret generic orchestrator-auth-secret \
@@ -79,36 +67,19 @@ oc create secret generic orchestrator-auth-secret \
   --from-literal=GITHUB_TOKEN=your-github-token
 ```
 
-## Installation Examples
+## Installation
 
-### Basic Installation
+After configuring all prerequisites, you can install the chart with the following command:
 
-```bash
-helm install orchestrator-templates redhat-developer/orchestrator-software-templates
+```console
+helm repo add redhat-developer https://redhat-developer.github.io/rhdh-chart
+
+helm install my-orchestrator-templates redhat-developer/orchestrator-software-templates
 ```
 
-### Custom RHDH Namespace
+Now, follow the instruction on the Post-installation Notes. 
 
-```bash
-helm install orchestrator-templates redhat-developer/orchestrator-software-templates \
-  --set orchestratorTemplates.rhdhChartNamespace=my-rhdh-namespace
-```
 
-### Disable Components
-
-```bash
-helm install orchestrator-templates redhat-developer/orchestrator-software-templates \
-  --set tekton.enabled=false \
-  --set argocd.enabled=false
-```
-
-### Custom ArgoCD Configuration
-
-```bash
-helm install orchestrator-templates redhat-developer/orchestrator-software-templates \
-  --set argocd.argocdNamespace=my-gitops-namespace \
-  --set argocd.argocdUrl=https://my-argocd-server.com
-```
 
 ## Uninstalling the Chart
 
