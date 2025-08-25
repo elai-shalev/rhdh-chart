@@ -77,8 +77,14 @@ helm repo add redhat-developer https://redhat-developer.github.io/rhdh-chart
 helm install my-orchestrator-templates redhat-developer/orchestrator-software-templates
 ```
 
-Now, follow the instruction on the Post-installation Notes. 
+Now, follow the instruction on the Post-installation Notes. They will include the steps to create a custom values.yaml file to allow you to update the backstage chart
 
+## Running a template
+
+In the RHDH UI, you will now have some software templates available. You can select one and click on "Run" to start the workflow.
+For example, you can run the "Github Basic workflow bootstrap project" template to create a new workflow project. 
+After bootstrapping the project, a Tekton pipeline will build and push the workflow, and the ArgoCD project we have configured will deploy it onto the cluster in the rhdh namespace.
+After all GitOps components run successfuly, you can now run the workflow via Orchestrator.
 
 
 ## Uninstalling the Chart
@@ -98,7 +104,13 @@ The command removes all the Kubernetes components associated with the chart and 
 1. **Secret not found error**: Ensure the `orchestrator-auth-secret` exists in the correct namespace
 2. **CRD not available**: Verify that Tekton and ArgoCD operators are installed and their CRDs are available
 3. **RHDH not picking up configurations**: Check that the ConfigMaps have the correct label `rhdh.redhat.com/ext-config-sync: "true"`
-4. **Tekton PipelineRuns are not successful**: Make sure that affinity-assistant is disabled in the TektonConfig CR.
+4. **Tekton PipelineRuns are not successful**: Make sure that affinity-assistant is disabled in the TektonConfig CR. To disable it, you can run the following command: `oc patch tektonconfig config -n openshift-pipelines --type merge -p '{"spec":{"featureFlags":{"coschedule":false}}}'`
+5. **Namespace labeling**: Label the RHDH namespace for ArgoCD management: `oc label ns rhdh argocd.argoproj.io/managed-by=orchestrator-gitops`
+6. **Bootstrap project permissions**: When running templates to create bootstrap projects, ensure the bootstrap project repository has write permissions. You can change the permissions by editing the repository in Github.
+7. **AppProject creation**: If no AppProject exists, create a new AppProject in the `orchestrator-gitops` namespace
+8. **Required secrets**: Ensure the docker merged secret and orchestrator auth secret are present on the cluster
+9. **Concurrent pipeline runs**: Avoid running multiple pipelines simultaneously - if a pipeline fails, ensure no other pipelines are running at the same time
+10. **GitOps pipeline flow**: Follow the complete workflow: PipelineRun → GitOps pipeline → Workflow deployment on cluster
 
 ### Checking Prerequisites
 

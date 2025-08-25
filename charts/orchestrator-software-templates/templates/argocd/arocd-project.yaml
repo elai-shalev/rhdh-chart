@@ -2,7 +2,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
-  name: rhdh
+  name: orchestrator-gitops
   namespace: {{ include "get-argocd-namespace" . }}
 spec:
   destinations:
