@@ -19,10 +19,10 @@ metadata:
 rules:
   - apiGroups: ["operators.coreos.com"]
     resources: ["clusterserviceversions", "subscriptions"]
-    verbs: ["get", "list", "delete", "watch"]
+    verbs: ["get", "list", "delete", "watch", "patch", "update"]
   - apiGroups: ["argoproj.io"]
     resources: ["argocds", "applications", "appprojects"]
-    verbs: ["get", "list", "delete", "watch"]
+    verbs: ["get", "list", "delete", "watch", "patch", "update"]
   - apiGroups: [""]
     resources: ["pods"]
     verbs: ["get", "list"]
@@ -112,7 +112,7 @@ spec:
                 echo "    ArgoCD $name stuck, removing finalizers..."
                 
                 # Remove finalizers using JSON patch
-                kubectl patch argocd $name -n $ns --type='json' -p='[{"op": "remove", "path": "/metadata/finalizers"}]' 2>/dev/null || true
+                kubectl patch argocd $name -n $ns --type='merge' -p '{"metadata":{"finalizers":[]}}' || true
                 
                 # Force delete
                 kubectl delete argocd $name -n $ns --force --grace-period=0 2>/dev/null || true
