@@ -11,7 +11,7 @@ metadata:
     argocd.argoproj.io/secret-type: repository
   annotations:
     helm.sh/hook: post-install,post-upgrade
-    helm.sh/hook-weight: "1"
+    helm.sh/hook-weight: "2"
 stringData:
   type: {{ $repo.type }}
   url: {{ $repo.url }}

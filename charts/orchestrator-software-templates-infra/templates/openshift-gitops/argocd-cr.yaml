@@ -11,7 +11,7 @@ metadata:
   namespace: {{ $ns }}
   annotations:
     helm.sh/hook: post-install,post-upgrade
-    helm.sh/hook-weight: "0"
+    helm.sh/hook-weight: "1"
 spec:
   applicationInstanceLabelKey: rht-gitops.com/{{ $ns }}
   {{- if $.Values.openshiftGitops.argocd_cr }}
