@@ -150,7 +150,7 @@ function captureGitClientSecret {
 }
 
 function captureArgoCDNamespace {
-  default="openshift-gitops"
+  default="orchestrator-gitops"
   if [ "$use_default" == true ]; then
     argocd_namespace="$default"
   else

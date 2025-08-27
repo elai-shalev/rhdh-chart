@@ -5,7 +5,8 @@ annotations:
 apiVersion: v2
 name: orchestrator-software-templates
 description: >
-  A Helm chart to install Openshift GitOps and Openshift Pipelines, which are required operators for installing Software Templates to be avaliable on RHDH.
+  This Helm chart deploys the Orchestrator Software Templates for Red Hat Developer Hub (RHDH) and other necessary GitOps configurations.
+
 kubeVersion: ">= 1.25.0-0"
 type: application
 sources:
